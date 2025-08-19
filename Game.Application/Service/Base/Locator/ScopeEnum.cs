@@ -1,4 +1,4 @@
-namespace Game.Logic.Command.Base.Locator
+namespace Game.Application.Service.Base.Locator
 {
     public enum Scope
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Game.Logic.Command.Base.Locator
+namespace Game.Application.Service.Base.Locator
 {
     public static class ScopeEnumLevel
     {

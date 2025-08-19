@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Game.Logic.Command.Base.Locator
+namespace Game.Application.Service.Base.Locator
 {
     public interface IServiceLocator
     {
@@ -39,19 +39,41 @@ namespace Game.Logic.Command.Base.Locator
 
             if (type.IsInterface)
             {
-                var reg = _registeredServices.FirstOrDefault(d => d.Key.ContainsKey(type));
-                if (reg.Key != null)
+                if (type.IsGenericType)
                 {
-                    implType = reg.Key[type];
-                    scope = reg.Value;
+                    var genericDefinition = type.GetGenericTypeDefinition();
+                    var reg = _registeredServices.FirstOrDefault(d => d.Key.ContainsKey(genericDefinition));
+                    if (reg.Key != null)
+                    {
+                        implType = reg.Key[genericDefinition].MakeGenericType(type.GetGenericArguments());
+                        scope = reg.Value;
 
-                    // check scope level
-                    if (scope.GetScopeLevel() < _scopeLevel)
-                        throw new Exception($"Cannot inject {implType.Name} with lower scope than locator level {_scopeLevel}");
+                        if (scope != Scope.Transient && scope.GetScopeLevel() < _scopeLevel)
+                            throw new Exception($"Cannot inject {implType.Name} with lower scope than locator level {_scopeLevel}");
+                    }
+                    else
+                    {
+                        throw new Exception($"No mapping found for interface {type.Name}");
+                    }
                 }
                 else
-                    throw new Exception($"No mapping found for interface {type.Name}");
+                {
+                    var reg = _registeredServices.FirstOrDefault(d => d.Key.ContainsKey(type));
+                    if (reg.Key != null)
+                    {
+                        implType = reg.Key[type];
+                        scope = reg.Value;
+
+                        if (scope != Scope.Transient && scope.GetScopeLevel() < _scopeLevel)
+                            throw new Exception($"Cannot inject {implType.Name} with lower scope than locator level {_scopeLevel}");
+                    }
+                    else
+                    {
+                        throw new Exception($"No mapping found for interface {type.Name}");
+                    }
+                }
             }
+
 
             switch (scope)
             {
