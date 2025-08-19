@@ -74,7 +74,6 @@ namespace Game.Application.Service.Base.Locator
                 }
             }
 
-
             switch (scope)
             {
                 case Scope.Singleton:
