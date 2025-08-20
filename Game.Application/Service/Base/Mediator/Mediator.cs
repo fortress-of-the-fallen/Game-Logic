@@ -1,25 +1,25 @@
 using System;
 using System.Linq;
-using System.Reflection;
+using System.Threading.Tasks;
+using Game.Application.Domain.Message;
 using Game.Application.Interface;
 using Game.Application.Service.Base.Locator;
 using Game.Application.Service.Interface;
+using Game.Application.Service.Models.Res.Base;
 
 namespace Game.Application.Base.Mediator
 {
     public class Mediator
     {
-        public static TResponse Send<TRequest, TResponse>(TRequest request)
+        public async static Task<ResultRes<T>> Send<TRequest, T>(TRequest request)
             where TRequest : class
-            where TResponse : class
+            where T : class
         {
             using (var scopeLocator = new ServiceLocator(scope: Scope.Scope))
             {
-                // Set the context for the request
                 var contextAccessor = scopeLocator.Get<IContextAccessor>();
                 contextAccessor.SetContextAccessor(request);
 
-                // Get the type of the request
                 var requestType = request.GetType();
                 var handlerType = AppDomain.CurrentDomain
                     .GetAssemblies()
@@ -33,10 +33,21 @@ namespace Game.Application.Base.Mediator
                     );
 
                 if (handlerType == null)
-                    throw new Exception($"Handler not found for {requestType.Name}");
+                    return ResultRes<T>.Fail($"Handler not found for {requestType.Name}");
 
-                var handler = (IServiceHandler<TRequest, TResponse>)scopeLocator.Get(handlerType);
-                return handler.Handle(request);
+                var handler = (IServiceHandler<TRequest,  T>)scopeLocator.Get(handlerType);
+
+                try
+                {
+                    var (errorCode, data) = await handler.Handle(request);
+                    return ResultRes<T>.Get(errorCode, data);
+                }
+                catch (Exception ex)
+                {
+                    var logger = scopeLocator.Get<ILogger<Mediator>>();
+                    logger.LogError($"Error occurred while handling {requestType.Name}, {ex.Message}");
+                    return ResultRes<T>.Fail(BaseMessage.Exception);
+                }
             }
         }
     }

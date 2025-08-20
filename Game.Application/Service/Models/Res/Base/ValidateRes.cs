@@ -1,4 +1,4 @@
-namespace Game.Application.Models.Res
+namespace Game.Application.Service.Models.Res.Base
 {
     public class ValidateRes
     {

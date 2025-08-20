@@ -98,11 +98,20 @@ namespace Game.Application.Infra.DataAccess.Repository
 
         public async Task<T> Single(Expression<Func<T, bool>> predicate = null, bool disableTracking = true)
         {
+            IQueryable<T> query = disableTracking ? DbSet.AsNoTracking() : DbSet;
+
             if (disableTracking)
             {
-                return await DbSet.AsNoTracking().SingleOrDefaultAsync(predicate);
+                if (predicate == null)
+                    return await query.SingleOrDefaultAsync();
+                else
+                    return await query.SingleOrDefaultAsync(predicate);
             }
-            return await DbSet.SingleOrDefaultAsync(predicate);
+            
+            if (predicate == null)
+                return await query.SingleOrDefaultAsync();
+            else
+                return await query.SingleOrDefaultAsync(predicate);
         }
 
         public async Task Update(T entity)

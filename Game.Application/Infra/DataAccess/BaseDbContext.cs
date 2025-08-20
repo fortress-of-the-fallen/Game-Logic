@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Reflection;
 using Game.Application.Domain.Entity;
+using Game.Application.Infra.DataAccess.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 namespace Game.Application.Infra.DataAccess
@@ -20,6 +21,12 @@ namespace Game.Application.Infra.DataAccess
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.SeedData();
+
+            modelBuilder.Entity<Setting>()
+                .HasIndex(s => s.Key)
+                .IsUnique();
 
             var entityTypes = Assembly.GetExecutingAssembly()
                 .GetTypes()

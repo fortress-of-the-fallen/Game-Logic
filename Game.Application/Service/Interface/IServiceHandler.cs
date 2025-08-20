@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace Game.Application.Service.Interface
 {
     public interface IServiceHandler<TRequest, TResponse>
     {
-        TResponse Handle(TRequest request);
+        Task<(string, TResponse)> Handle(TRequest request);
     }
 }

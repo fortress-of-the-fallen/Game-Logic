@@ -1,13 +1,9 @@
-namespace Game.Application.Models.Res.Base
+namespace Game.Application.Service.Models.Res.Base
 {
     public class ExecutionRes
     {
-        public bool Success { get; set; }
-
         public string ErrorCode { get; set; }
 
-        public string Error { get; set; }
-
-        public ValidateRes[] Validates { get; set; }
+        public bool IsSuccess => string.IsNullOrEmpty(ErrorCode);
     }
 }

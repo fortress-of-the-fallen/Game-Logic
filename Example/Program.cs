@@ -1,7 +1,4 @@
-﻿
-using Game.Application.Base.Mediator;
-using Game.Application.Command.Models.Req.Sample;
+﻿using Example.Setting;
 
-var a = Mediator.Send<SampleReq, Task<string>>(new SampleReq());
-
-Console.WriteLine(await a);
+// await SettingExample.SetSettingExample();
+await SettingExample.GetSettingsExample();
