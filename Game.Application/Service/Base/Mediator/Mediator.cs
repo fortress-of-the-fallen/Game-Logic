@@ -37,7 +37,6 @@ namespace Game.Application.Base.Mediator
 
                 var handler = (IServiceHandler<TRequest, TResponse>)scopeLocator.Get(handlerType);
                 return handler.Handle(request);
-
             }
         }
     }
