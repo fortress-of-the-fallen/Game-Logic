@@ -9,6 +9,9 @@ using Game.Application.Service.Interface;
 
 namespace Game.Application.Service.Handlers.SettingHandler
 {
+    /// <summary>
+    /// SettingHandlerMessage.SetSettingHandler.InvalidLanguage: Invalid language setting.
+    /// </summary>
     public sealed class SetSettingReq
     {
         public string Key { get; set; }

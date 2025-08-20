@@ -1,4 +1,5 @@
 ﻿using Example.Setting;
 
 // await SettingExample.SetSettingExample();
-await SettingExample.GetSettingsExample();
+// await SettingExample.GetSettingsExample();
+// await SettingExample.GetCurrentSettingExample();

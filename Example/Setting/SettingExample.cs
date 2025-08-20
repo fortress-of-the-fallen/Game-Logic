@@ -13,8 +13,8 @@ namespace Example.Setting
         {
             var a = await Mediator.Send<SetSettingReq, string>(new SetSettingReq()
             {
-                Key = SettingConstant.Language,
-                Value = LanguageConstant.English
+                Key = "SettingConstant.Language",
+                Value = LanguageConstant.Vietnamese
             });
 
             Console.WriteLine(JsonConvert.SerializeObject(a));
@@ -23,6 +23,17 @@ namespace Example.Setting
         public static async Task<ResultRes<IEnumerable<SettingsRes>>> GetSettingsExample()
         {
             var a = await Mediator.Send<GetAllSettingReq, IEnumerable<SettingsRes>>(new GetAllSettingReq());
+
+            Console.WriteLine(JsonConvert.SerializeObject(a));
+            return a;
+        }
+
+        public static async Task<ResultRes<string>> GetCurrentSettingExample()
+        {
+            var a = await Mediator.Send<GetCurrentSettingReq, string>(new GetCurrentSettingReq()
+            {
+                Key = SettingConstant.Language
+            });
 
             Console.WriteLine(JsonConvert.SerializeObject(a));
             return a;

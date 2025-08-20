@@ -9,10 +9,7 @@ using Game.Application.Service.Models.Res.Settings;
 
 namespace Game.Application.Service.Handlers.SettingHandler
 {
-    public class GetAllSettingReq
-    {
-
-    }
+    public class GetAllSettingReq { }
 
     [ReqModel(typeof(GetAllSettingReq))]
     public class GetAllSettingHandler : IServiceHandler<GetAllSettingReq, IEnumerable<SettingsRes>>
