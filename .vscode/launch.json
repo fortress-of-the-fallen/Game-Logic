@@ -10,7 +10,10 @@
             "args": [],
             "cwd": "${workspaceFolder}/Example",
             "console": "integratedTerminal",
-            "stopAtEntry": false
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
         }
     ]
 }
