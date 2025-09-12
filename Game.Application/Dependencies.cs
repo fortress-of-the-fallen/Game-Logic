@@ -23,7 +23,7 @@ namespace Game.Application
                 { new Dictionary<Type, Type> { { typeof(IRestfulService), typeof(RestfulService) } }, Scope.Singleton },
                 { new Dictionary<Type, Type> { { typeof(IContextAccessor), typeof(ContextAccessor) } }, Scope.Singleton },
                 { new Dictionary<Type, Type> { { typeof(IUnitOfWork), typeof(UnitOfWork) } }, Scope.Scope },
-                { new Dictionary<Type, Type> { { typeof(IRealtimeClient), typeof(RealtimeClient) } }, Scope.Transient }
+                { new Dictionary<Type, Type> { { typeof(IRealtimeClient), typeof(RealtimeClient) } }, Scope.Singleton }
             };
         private static readonly DbContext dbContext = new BaseDbContext();
 
