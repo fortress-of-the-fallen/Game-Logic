@@ -13,7 +13,7 @@ namespace Example.Setting
         {
             var a = await Mediator.Send<SetSettingReq, string>(new SetSettingReq()
             {
-                Key = "SettingConstant.Language",
+                Key = SettingConstant.Language,
                 Value = LanguageConstant.Vietnamese
             });
 
