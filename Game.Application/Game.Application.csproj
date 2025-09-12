@@ -15,5 +15,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.32" />
     <PackageReference Include="Nanoid" Version="3.1.0" />
     <PackageReference Include="SocketIOClient" Version="3.1.2" />
+    <PackageReference Include="SocketIOClient.Newtonsoft.Json" Version="3.0.7" />
   </ItemGroup>
 </Project>
