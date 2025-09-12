@@ -38,7 +38,7 @@ namespace Game.Application.Service.Handlers.AuthHandler
         {
             var userRepo = _unitOfWork.GetRepository<User>();
             var loginClient = _realTimeManager.GetClient("/login");
-            loginClient.Connect(ConfigConstant.Url);
+            loginClient.Connect();
             loginClient.SendEvent("getConnectionId", null, response =>
             {
                 var resp = response as dynamic;

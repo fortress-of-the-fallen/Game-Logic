@@ -20,7 +20,7 @@ namespace Game.Application.Infra.Realtime
 
         public void Connect()
         {
-            var url = ConfigConstant.Url;
+            var url = ConfigConstant.Url + _route;
 
             if (_socket != null && _isConnected)
                 return;
@@ -37,12 +37,14 @@ namespace Game.Application.Infra.Realtime
             {
                 _isConnected = false;
                 Disconnected?.Invoke();
+                Console.WriteLine("Socket disconnected");
             });
 
             _socket.On(Socket.EVENT_ERROR, (error) =>
             {
                 _isConnected = false;
                 Disconnected?.Invoke();
+                Console.WriteLine("Socket error");
             });
         }
 
