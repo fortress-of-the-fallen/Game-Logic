@@ -41,14 +41,18 @@ namespace Game.Application.Service.Handlers.AuthHandler
 
             var tcs = new TaskCompletionSource<string>();
             loginClient.Connect();
-            loginClient.OnEvent("getConnectionId", response =>
+            loginClient.OnEvent("message", response =>
             {
-                var resp = response as dynamic;
+                Console.WriteLine("Message from server: ");
+            });
+            loginClient.SendEvent("getConnectionId", (object)null, response =>
+            {
+                var json = response.ToString();
+                var resp = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(json);
                 _connectionId = resp.connectionId;
-
                 tcs.TrySetResult(_connectionId);
             });
-            loginClient.SendEvent("getConnectionId", null);
+
             await tcs.Task;
 
             return (_connectionId, string.Empty);

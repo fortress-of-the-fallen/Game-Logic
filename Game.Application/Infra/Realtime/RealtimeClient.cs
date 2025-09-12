@@ -58,9 +58,19 @@ namespace Game.Application.Infra.Realtime
             _socket?.On(eventName, callback);
         }
 
-        public void SendEvent(string eventName, object data, Action<object> ack = null)
+        public void SendEvent(string eventName, object data = null, Action<object> ack = null)
         {
-            _socket?.Emit(eventName, data, ack);
+            if (ack != null)
+            {
+                if (data != null)
+                    _socket.Emit(eventName, ack, data);
+                else
+                    _socket.Emit(eventName, ack);
+            }
+            else
+            {
+                _socket.Emit(eventName, data);
+            }
         }
     }
 }
