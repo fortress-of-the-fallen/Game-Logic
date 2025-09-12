@@ -14,7 +14,7 @@ namespace Game.Application.Infra.Realtime
                 return client;
             }
 
-            client = new RealtimeClient();
+            client = new RealtimeClient(route);
             _clients[route] = client;
             return client;
         }

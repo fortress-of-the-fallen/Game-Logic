@@ -1,4 +1,5 @@
 using System;
+using Game.Application.Domain.Constant;
 using Game.Application.Interface.Realtime;
 using Quobject.SocketIoClientDotNet.Client;
 
@@ -8,11 +9,19 @@ namespace Game.Application.Infra.Realtime
     {
         private Socket _socket;
         private bool _isConnected;
-
+        private string _route;
         public event Action Disconnected;
 
-        public void Connect(string url)
+        public RealtimeClient(string route)
         {
+            _isConnected = false;
+            _route = route;
+        }
+
+        public void Connect()
+        {
+            var url = ConfigConstant.Url;
+
             if (_socket != null && _isConnected)
                 return;
 
