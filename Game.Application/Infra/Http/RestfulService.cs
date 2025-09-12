@@ -13,16 +13,16 @@ namespace Game.Application.Infra.Http
 {
     public class RestfulService : IRestfulService
     {
-        private readonly ILogger<RestfulService> _logger;
+        // private readonly ILogger<RestfulService> _logger;
         private readonly HttpClient _httpClient = new HttpClient
         {
             Timeout = Timeout.InfiniteTimeSpan
         };
 
-        public RestfulService(ILogger<RestfulService> logger)
-        {
-            _logger = logger;
-        }
+        // public RestfulService(ILogger<RestfulService> logger)
+        // {
+        //     _logger = logger;
+        // }
 
         public async Task<(bool, HttpStatusCode)> Delete(string url, Dictionary<string, string> headers = null, int timeout = 30, CancellationToken token = default, bool force = false)
         {
@@ -44,13 +44,12 @@ namespace Game.Application.Infra.Http
                         return (response.IsSuccessStatusCode, response.StatusCode);
                     }
 
-                    _logger.LogError("DELETE request failed (Status: {statusCode})", response.StatusCode);
                     return (false, response.StatusCode);
                 }
             }
             catch (TaskCanceledException)
             {
-                _logger.LogError("DELETE request timed out after {timeout} seconds", timeout);
+                // _logger.LogError("DELETE request timed out after {timeout} seconds", timeout);
                 return (false, HttpStatusCode.RequestTimeout);
             }
         }
@@ -93,7 +92,7 @@ namespace Game.Application.Infra.Http
                     }
                     else
                     {
-                        _logger.LogError($"Request failed (Status: {response.StatusCode}): {await response.Content.ReadAsStringAsync()}");
+                        // _logger.LogError($"Request failed (Status: {response.StatusCode}): {await response.Content.ReadAsStringAsync()}");
                         return (null, response.StatusCode);
                     }
 
@@ -102,7 +101,7 @@ namespace Game.Application.Infra.Http
             }
             catch (TaskCanceledException)
             {
-                _logger.LogError($"Request timed out after {timeout} seconds");
+                // _logger.LogError($"Request timed out after {timeout} seconds");
                 return (null, HttpStatusCode.RequestTimeout);
             }
         }
@@ -147,7 +146,7 @@ namespace Game.Application.Infra.Http
                     }
                     else
                     {
-                        _logger.LogError($"Request failed (Status: {response.StatusCode}): {JsonConvert.SerializeObject(rawData)}");
+                        // _logger.LogError($"Request failed (Status: {response.StatusCode}): {JsonConvert.SerializeObject(rawData)}");
                         return (null, response.StatusCode);
                     }
 
@@ -156,7 +155,7 @@ namespace Game.Application.Infra.Http
             }
             catch (TaskCanceledException)
             {
-                _logger.LogError($"Request timed out after {timeout} seconds");
+                // _logger.LogError($"Request timed out after {timeout} seconds");
                 return (null, HttpStatusCode.RequestTimeout);
             }
         }
@@ -222,7 +221,7 @@ namespace Game.Application.Infra.Http
                         else
                         {
                             var responseJson = await response.Content.ReadAsStringAsync();
-                            _logger.LogError($"POST form data request failed (Status: {response.StatusCode}): {responseJson}");
+                            // _logger.LogError($"POST form data request failed (Status: {response.StatusCode}): {responseJson}");
                             return (null, response.StatusCode);
                         }
 
@@ -232,7 +231,7 @@ namespace Game.Application.Infra.Http
             }
             catch (TaskCanceledException)
             {
-                _logger.LogError("POST request timed out after {0} seconds", timeout);
+                // _logger.LogError("POST request timed out after {0} seconds", timeout);
                 return (null, HttpStatusCode.RequestTimeout);
             }
             finally
@@ -279,7 +278,7 @@ namespace Game.Application.Infra.Http
                     }
                     else
                     {
-                        _logger.LogError("PUT request failed (Status: {statusCode}): {responseJson}", response.StatusCode, JsonConvert.SerializeObject(rawData));
+                        // _logger.LogError("PUT request failed (Status: {statusCode}): {responseJson}", response.StatusCode, JsonConvert.SerializeObject(rawData));
                         return (null, response.StatusCode);
                     }
 
@@ -288,7 +287,7 @@ namespace Game.Application.Infra.Http
             }
             catch (TaskCanceledException)
             {
-                _logger.LogError("PUT request timed out after {timeout} seconds", timeout);
+                // _logger.LogError("PUT request timed out after {timeout} seconds", timeout);
                 return (null, HttpStatusCode.RequestTimeout);
             }
         }
@@ -345,8 +344,8 @@ namespace Game.Application.Infra.Http
                         }
                         else
                         {
-                            _logger.LogError("PUT form data request failed (Status: {statusCode}): {responseJson}",
-                                response.StatusCode, JsonConvert.SerializeObject(formFields));
+                            // _logger.LogError("PUT form data request failed (Status: {statusCode}): {responseJson}",
+                                // response.StatusCode, JsonConvert.SerializeObject(formFields));
                             return (null, response.StatusCode);
                         }
 
@@ -356,7 +355,7 @@ namespace Game.Application.Infra.Http
             }
             catch (TaskCanceledException)
             {
-                _logger.LogError("PUT request timed out after {timeout} seconds", timeout);
+                // _logger.LogError("PUT request timed out after {timeout} seconds", timeout);
                 return (null, HttpStatusCode.RequestTimeout);
             }
             finally
