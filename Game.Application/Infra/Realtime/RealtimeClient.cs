@@ -1,8 +1,11 @@
 using System;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Game.Application.Domain.Constant;
+using Game.Application.Domain.Helpers;
 using Game.Application.Interface.Realtime;
+using SocketIO.Core;
 using SocketIOClient;
 
 namespace Game.Application.Infra.Realtime
@@ -28,7 +31,9 @@ namespace Game.Application.Infra.Realtime
             _socket = new SocketIOClient.SocketIO(ConfigConstant.Url + _route, new SocketIOClient.SocketIOOptions
             {
                 Reconnection = true,
-                ConnectionTimeout = TimeSpan.FromMilliseconds(timeoutMs)
+                ConnectionTimeout = TimeSpan.FromMilliseconds(timeoutMs),
+                EIO = EngineIO.V4,
+                ReconnectionDelay = 1000
             });
 
             var tcs = new TaskCompletionSource<bool>();
@@ -98,6 +103,8 @@ namespace Game.Application.Infra.Realtime
                 {
                     try
                     {
+                        var jsonElement = response.GetValue<JsonElement>();
+                        string connectionId = jsonElement.GetProperty("connectionId").GetString();
                         T value = response.GetValue<T>();
                         tcs.TrySetResult(value);
                     }
@@ -118,8 +125,5 @@ namespace Game.Application.Infra.Realtime
                 cts.Dispose();
             }
         }
-
-
-
     }
 }

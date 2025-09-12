@@ -5,9 +5,9 @@ namespace Game.Application.Interface.Realtime
 {
     public interface IRealtimeClient
     {
-        Task ConnectAsync(int timeoutMs = 5000);
+        Task ConnectAsync(int timeoutMs = 10000);
         Task DisconnectAsync();
-        Task<T> SendEventAsync<T>(string eventName, object data = null, int timeoutMs = 5000);
+        Task<T> SendEventAsync<T>(string eventName, object data = null, int timeoutMs = 10000);
         void OnEvent(string eventName, Action<object> callback);
     }
 }

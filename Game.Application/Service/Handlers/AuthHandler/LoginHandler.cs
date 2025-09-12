@@ -39,15 +39,21 @@ namespace Game.Application.Service.Handlers.AuthHandler
             var userRepo = _unitOfWork.GetRepository<User>();
             var loginClient = _realTimeManager.GetClient("/login");
 
-            var tcs = new TaskCompletionSource<string>();
             await loginClient.ConnectAsync();
             loginClient.OnEvent("message", response =>
             {
                 Console.WriteLine("Message from server: ");
             });
-            _connectionId = await loginClient.SendEventAsync<string>("getConnectionId");
+            var payload = new
+            {
+                username = request.Username,
+                password = request.Password,
+                rememberMe = request.RememberMe
+            };
 
-            await tcs.Task;
+            _connectionId = await loginClient.SendEventAsync<string>("getConnectionId", payload);
+
+            var a = 4;
 
             return (_connectionId, string.Empty);
         }
