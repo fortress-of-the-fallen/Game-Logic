@@ -8,6 +8,7 @@ using Game.Application.Domain.Entity;
 using Game.Application.Interface.Realtime;
 using System;
 using Game.Application.Domain.Constant;
+using Game.Application.Service.Models;
 
 namespace Game.Application.Service.Handlers.AuthHandler
 {
@@ -34,28 +35,30 @@ namespace Game.Application.Service.Handlers.AuthHandler
             _realTimeManager = realTimeManager;
         }
 
-        public async Task<(string, string)> Handle(LoginReq request)
-        {
-            var userRepo = _unitOfWork.GetRepository<User>();
-            var loginClient = _realTimeManager.GetClient("/login");
+public async Task<(string, string)> Handle(LoginReq request)
+{
+    var userRepo = _unitOfWork.GetRepository<User>();
+    var loginClient = _realTimeManager.GetClient("/login");
 
-            await loginClient.ConnectAsync();
-            loginClient.OnEvent("message", response =>
-            {
-                Console.WriteLine("Message from server: ");
-            });
-            var payload = new
-            {
-                username = request.Username,
-                password = request.Password,
-                rememberMe = request.RememberMe
-            };
+    await loginClient.ConnectAsync();
 
-            _connectionId = await loginClient.SendEventAsync<string>("getConnectionId", payload);
+    loginClient.OnEvent("message", response =>
+    {
+        Console.WriteLine("Message from server: " + response);
+    });
 
-            var a = 4;
+    var payload = new
+    {
+        username = request.Username,
+        password = request.Password,
+        rememberMe = request.RememberMe
+    };
 
-            return (_connectionId, string.Empty);
+    // dùng model để nhận phản hồi
+    var resp = await loginClient.SendEventAsync<ConnectionResponse>("getConnectionId", payload);
+    _connectionId = resp.ConnectionId;
+
+    return (_connectionId, string.Empty);
         }
     }
 }

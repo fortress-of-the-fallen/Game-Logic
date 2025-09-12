@@ -103,9 +103,7 @@ namespace Game.Application.Infra.Realtime
                 {
                     try
                     {
-                        var jsonElement = response.GetValue<JsonElement>();
-                        string connectionId = jsonElement.GetProperty("connectionId").GetString();
-                        T value = response.GetValue<T>();
+                        T value = response.GetValue<T>(0); // nhớ thêm index 0
                         tcs.TrySetResult(value);
                     }
                     catch (Exception ex)
