@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Game.Application.Domain.Constant;
-using Game.Application.Domain.Helpers;
 using Game.Application.Interface.Realtime;
 using SocketIO.Core;
+using SocketIO.Serializer.SystemTextJson;
 using SocketIOClient;
 
 namespace Game.Application.Infra.Realtime
@@ -83,12 +84,12 @@ namespace Game.Application.Infra.Realtime
             _socket?.On(eventName, callback);
         }
 
-        public async Task<T> SendEventAsync<T>(string eventName, object data = null, int timeoutMs = 10000)
+        public async Task<string> SendEventAsync(string eventName, object data = null, int timeoutMs = 10000)
         {
             if (_socket == null || !_socket.Connected)
                 throw new InvalidOperationException("Socket not connected.");
 
-            var tcs = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var tcs = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
             var cts = new CancellationTokenSource(timeoutMs);
 
             try
@@ -103,8 +104,10 @@ namespace Game.Application.Infra.Realtime
                 {
                     try
                     {
-                        T value = response.GetValue<T>(0); // nhớ thêm index 0
-                        tcs.TrySetResult(value);
+                        // Lấy thẳng JSON string từ response
+                        var jsonString = response.ToString();
+
+                        tcs.TrySetResult(jsonString); // Không dùng <string> nữa
                     }
                     catch (Exception ex)
                     {
@@ -112,7 +115,6 @@ namespace Game.Application.Infra.Realtime
                     }
                     return Task.CompletedTask;
                 };
-
 
                 object[] payload = data != null ? new object[] { data } : Array.Empty<object>();
                 await _socket.EmitAsync(eventName, ack, payload);
@@ -123,5 +125,6 @@ namespace Game.Application.Infra.Realtime
                 cts.Dispose();
             }
         }
+
     }
 }

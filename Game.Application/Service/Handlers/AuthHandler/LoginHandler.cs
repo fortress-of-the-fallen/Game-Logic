@@ -55,8 +55,8 @@ public async Task<(string, string)> Handle(LoginReq request)
     };
 
     // dùng model để nhận phản hồi
-    var resp = await loginClient.SendEventAsync<ConnectionResponse>("getConnectionId", payload);
-    _connectionId = resp.ConnectionId;
+    var resp = await loginClient.SendEventAsync("getConnectionId", payload);
+    // _connectionId = resp.ConnectionId;
 
     return (_connectionId, string.Empty);
         }
