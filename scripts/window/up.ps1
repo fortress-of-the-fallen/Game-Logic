@@ -1,2 +1,0 @@
-docker-compose -f docker/docker-compose.yaml --env-file docker/.env.local -p fotff pull
-docker-compose -f docker/docker-compose.yaml --env-file docker/.env.local -p fotff up -d

@@ -7,7 +7,6 @@ using Game.Application.Infra.Logging;
 using Game.Application.Infra.Realtime;
 using Game.Application.Interface;
 using Game.Application.Interface.DataAccess.UnitOfWork;
-using Game.Application.Interface.Realtime;
 using Game.Application.Service.Base.Locator;
 using Microsoft.EntityFrameworkCore;
 

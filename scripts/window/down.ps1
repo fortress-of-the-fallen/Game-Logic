@@ -1,1 +1,0 @@
-docker-compose -f docker/docker-compose.yaml --env-file docker/.env.local -p fotff down
