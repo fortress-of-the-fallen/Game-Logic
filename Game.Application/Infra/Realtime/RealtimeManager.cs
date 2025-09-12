@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Game.Application.Interface.Realtime;
 
 namespace Game.Application.Infra.Realtime
@@ -19,11 +20,11 @@ namespace Game.Application.Infra.Realtime
             return client;
         }
 
-        public void RemoveClient(string route)
+        public async Task RemoveClient(string route)
         {
             if (_clients.TryGetValue(route, out var client))
             {
-                client.Disconnect();
+                await client.DisconnectAsync();
                 _clients.Remove(route);
             }
         }

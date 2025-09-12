@@ -45,13 +45,7 @@ namespace Game.Application.Service.Handlers.AuthHandler
             {
                 Console.WriteLine("Message from server: ");
             });
-            loginClient.SendEvent("getConnectionId", (object)null, response =>
-            {
-                var json = response.ToString();
-                var resp = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(json);
-                _connectionId = resp.connectionId;
-                tcs.TrySetResult(_connectionId);
-            });
+            _connectionId = await loginClient.SendEventAsync<string>("getConnectionId");
 
             await tcs.Task;
 

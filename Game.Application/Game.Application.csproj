@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.32" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.32" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.32" />
-    <PackageReference Include="SocketIoClientDotNet" Version="1.0.8" />
     <PackageReference Include="Nanoid" Version="3.1.0" />
+    <PackageReference Include="SocketIOClient" Version="3.1.2" />
   </ItemGroup>
 </Project>
