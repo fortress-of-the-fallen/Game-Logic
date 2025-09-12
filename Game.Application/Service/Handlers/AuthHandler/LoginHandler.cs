@@ -7,6 +7,7 @@ using Game.Application.Infra.Realtime;
 using Game.Application.Domain.Entity;
 using Game.Application.Interface.Realtime;
 using System;
+using Game.Application.Domain.Constant;
 
 namespace Game.Application.Service.Handlers.AuthHandler
 {
@@ -37,7 +38,7 @@ namespace Game.Application.Service.Handlers.AuthHandler
         {
             var userRepo = _unitOfWork.GetRepository<User>();
             var loginClient = _realTimeManager.GetClient("/login");
-
+            loginClient.Connect(ConfigConstant.Url);
             loginClient.SendEvent("getConnectionId", null, response =>
             {
                 var resp = response as dynamic;
