@@ -116,7 +116,7 @@ namespace Game.Application.Infra.Realtime
                     return Task.CompletedTask;
                 };
 
-                object[] payload = data != null ? new object[] { data } : Array.Empty<object>();
+                object[] payload = data != null ? new object[] { data } : new object[] { new { } };
                 await _socket.EmitAsync(eventName, ack, payload);
                 return await tcs.Task.ConfigureAwait(false);
             }
