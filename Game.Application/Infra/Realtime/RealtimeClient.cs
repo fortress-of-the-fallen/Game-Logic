@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Game.Application.Domain.Constant;
 using Game.Application.Interface.Realtime;
 using Quobject.SocketIoClientDotNet.Client;
@@ -18,19 +19,28 @@ namespace Game.Application.Infra.Realtime
             _route = route;
         }
 
-        public void Connect()
+        public async Task ConnectAsync(int timeoutMs = 5000)
         {
-            var url = ConfigConstant.Url + _route;
-
             if (_socket != null && _isConnected)
                 return;
+
+            var tcs = new TaskCompletionSource<bool>();
+            var url = ConfigConstant.Url + _route;
 
             _socket = IO.Socket(url);
 
             _socket.On(Socket.EVENT_CONNECT, () =>
             {
-                Console.WriteLine("Socket connected");
                 _isConnected = true;
+                tcs.TrySetResult(true);
+                Console.WriteLine("Socket connected");
+            });
+
+            _socket.On(Socket.EVENT_ERROR, (error) =>
+            {
+                _isConnected = false;
+                tcs.TrySetException(new Exception($"Socket error: {error}"));
+                Console.WriteLine("Socket error: " + error);
             });
 
             _socket.On(Socket.EVENT_DISCONNECT, () =>
@@ -40,13 +50,13 @@ namespace Game.Application.Infra.Realtime
                 Console.WriteLine("Socket disconnected");
             });
 
-            _socket.On(Socket.EVENT_ERROR, (error) =>
-            {
-                _isConnected = false;
-                Disconnected?.Invoke();
-                Console.WriteLine("Socket error");
-            });
+            var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(timeoutMs));
+            if (completedTask != tcs.Task)
+                throw new TimeoutException("Socket connect timed out");
+
+            await tcs.Task; 
         }
+
 
         public void Disconnect()
         {

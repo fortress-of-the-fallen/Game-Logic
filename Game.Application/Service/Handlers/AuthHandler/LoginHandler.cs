@@ -40,7 +40,7 @@ namespace Game.Application.Service.Handlers.AuthHandler
             var loginClient = _realTimeManager.GetClient("/login");
 
             var tcs = new TaskCompletionSource<string>();
-            loginClient.Connect();
+            await loginClient.ConnectAsync();
             loginClient.OnEvent("message", response =>
             {
                 Console.WriteLine("Message from server: ");
