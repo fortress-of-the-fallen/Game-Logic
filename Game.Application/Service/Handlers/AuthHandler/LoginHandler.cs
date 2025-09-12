@@ -38,15 +38,20 @@ namespace Game.Application.Service.Handlers.AuthHandler
         {
             var userRepo = _unitOfWork.GetRepository<User>();
             var loginClient = _realTimeManager.GetClient("/login");
+
+            var tcs = new TaskCompletionSource<string>();
             loginClient.Connect();
             loginClient.OnEvent("getConnectionId", response =>
             {
                 var resp = response as dynamic;
                 _connectionId = resp.connectionId;
+
+                tcs.TrySetResult(_connectionId);
             });
             loginClient.SendEvent("getConnectionId", null);
+            await tcs.Task;
 
-            return (string.Empty, string.Empty);
+            return (_connectionId, string.Empty);
         }
     }
 }
