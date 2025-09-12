@@ -1,7 +1,9 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Game.Application.Domain.Constant;
 using Game.Application.Interface.Realtime;
+using SocketIOClient;
 
 namespace Game.Application.Infra.Realtime
 {
@@ -77,45 +79,43 @@ namespace Game.Application.Infra.Realtime
             _socket?.On(eventName, callback);
         }
 
-        public async Task<T> SendEventAsync<T>(string eventName, object data = null)
+        public async Task<T> SendEventAsync<T>(string eventName, object data = null, int timeoutMs = 5000)
         {
-            if (_socket == null || !_isConnected)
+            if (_socket == null || !_socket.Connected)
                 throw new InvalidOperationException("Socket not connected.");
 
-            var tcs = new TaskCompletionSource<T>();
+            var tcs = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var cts = new CancellationTokenSource(timeoutMs);
 
-            if (data != null)
-            {
-                await _socket.EmitAsync(eventName, response =>
-                {
-                    try
-                    {
-                        T value = response.GetValue<T>();
-                        tcs.TrySetResult(value);
-                    }
-                    catch (Exception ex)
-                    {
-                        tcs.TrySetException(ex);
-                    }
-                }, data);
-            }
-            else
-            {
-                await _socket.EmitAsync(eventName, response =>
-                {
-                    try
-                    {
-                        T value = response.GetValue<T>();
-                        tcs.TrySetResult(value);
-                    }
-                    catch (Exception ex)
-                    {
-                        tcs.TrySetException(ex);
-                    }
-                });
-            }
+            cts.Token.Register(() => tcs.TrySetException(
+                new TimeoutException($"No ack received for event '{eventName}' within {timeoutMs}ms")));
 
-            return await tcs.Task;
+            Action<SocketIOResponse> ack = response =>
+            {
+                try
+                {
+                    T value = response.GetValue<T>();
+                    tcs.TrySetResult(value);
+                }
+                catch (Exception ex)
+                {
+                    tcs.TrySetException(ex);
+                }
+            };
+
+            try
+            {
+                // Nếu data null, gửi empty array để server không nhận undefined
+                object[] payload = data != null ? new object[] { data } : Array.Empty<object>();
+                await _socket.EmitAsync(eventName, ack, payload);
+
+                return await tcs.Task.ConfigureAwait(false);
+            }
+            finally
+            {
+                cts.Dispose();
+            }
         }
+
     }
 }
