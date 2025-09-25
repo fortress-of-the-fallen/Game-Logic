@@ -2,23 +2,23 @@ namespace Game.Application.Service.Models.Res.Base
 {
     public class ResultRes<T> : ExecutionRes
     {
-        public T Data { get; set; }
+        public T Result { get; set; }
 
         public static ResultRes<T> Fail(string errorCode)
         {
             return new ResultRes<T>
             {
                 ErrorCode = errorCode,
-                Data = default,
+                Result = default,
             };
         }
 
-        public static ResultRes<T> Get(string errorCode, T data)
+        public static ResultRes<T> Get(string errorCode, T Result)
         {
             return new ResultRes<T>
             {
                 ErrorCode = errorCode,
-                Data = data,
+                Result = Result,
             };
         }
     }

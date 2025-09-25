@@ -6,6 +6,9 @@ using Game.Application.Service.Interface;
 using Game.Application.Domain.Entity;
 using Game.Application.Interface.Realtime;
 using Newtonsoft.Json.Linq;
+using Game.Application.Service.Models.Res.Base;
+using Game.Application.Domain.Constant;
+using System.Collections.Generic;
 
 namespace Game.Application.Service.Handlers.AuthHandler
 {
@@ -22,42 +25,46 @@ namespace Game.Application.Service.Handlers.AuthHandler
     {
         private readonly ILogger<SetSettingHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRealtimeManager _realTimeManager;
         private readonly IRestfulService _restfulService;
         private string _connectionId;
 
         public LoginHandler(
             ILogger<SetSettingHandler> logger,
             IUnitOfWork unitOfWork,
-            IRealtimeManager realTimeManager,
             IRestfulService restfulService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-            _realTimeManager = realTimeManager;
             _restfulService = restfulService;
         }
 
         public async Task<(string, string)> Handle(LoginReq request)
         {
             var userRepo = _unitOfWork.GetRepository<User>();
-            var loginClient = _realTimeManager.GetClient("/login");
-
-            await loginClient.ConnectAsync();
-
-            var tcs = new TaskCompletionSource<string>();
-            loginClient.OnEvent("message", response =>
+            var userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+            var loginData = new
             {
-                tcs.TrySetResult(response.ToString());
-            });
+                username = request.Username,
+                password = request.Password,
+                rememberMe = request.RememberMe,
+                connectionId = request.ConnectionId
+            };
 
-            var resp = await loginClient.SendEventAsync("getConnectionId");
-            JArray arr = JArray.Parse(resp);
-            string connectionId = (string)arr[0]["connectionId"];
+            var loginHeaders = new Dictionary<string, string>
+            {
+                {"User-Agent", userAgent}
+            };
 
-            await Task.WhenAny(tcs.Task, Task.Delay(100000));
+            var (loginRes, code) = await _restfulService.Post<ResultRes<string>>(ConfigConstant.Url + RouteConstant.Auth.Login, loginData, headers: loginHeaders);
 
-            return (_connectionId, string.Empty);
+            if (loginRes.IsSuccess == true)
+            {
+                if (await userRepo.Any(U => U.SessionId == loginRes.Result)) return (string.Empty, string.Empty);
+                await userRepo.Add(new User { SessionId = loginRes.Result });
+                await _unitOfWork.SaveChanges();
+            }
+
+            return (string.Empty, string.Empty);
         }
     }
 }

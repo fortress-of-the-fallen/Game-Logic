@@ -9,8 +9,8 @@ namespace Example.Auth
         {
             var a = await Mediator.Send<LoginReq, string>(new LoginReq()
             {
-                Username = "memaybeo",
-                Password = "thanhhoa",
+                Username = "admin",
+                Password = "admin123",
                 RememberMe = true,
                 ConnectionId = "abc"
             });
