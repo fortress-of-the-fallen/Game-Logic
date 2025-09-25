@@ -23,17 +23,14 @@ namespace Game.Application.Service.Handlers.AuthHandler
     [ReqModel(typeof(LoginReq))]
     public class LoginHandler : IServiceHandler<LoginReq, string>
     {
-        private readonly ILogger<SetSettingHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRestfulService _restfulService;
         private string _connectionId;
 
         public LoginHandler(
-            ILogger<SetSettingHandler> logger,
             IUnitOfWork unitOfWork,
             IRestfulService restfulService)
         {
-            _logger = logger;
             _unitOfWork = unitOfWork;
             _restfulService = restfulService;
         }
@@ -41,7 +38,6 @@ namespace Game.Application.Service.Handlers.AuthHandler
         public async Task<(string, string)> Handle(LoginReq request)
         {
             var userRepo = _unitOfWork.GetRepository<User>();
-            var userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
             var loginData = new
             {
                 username = request.Username,
@@ -50,12 +46,7 @@ namespace Game.Application.Service.Handlers.AuthHandler
                 connectionId = request.ConnectionId
             };
 
-            var loginHeaders = new Dictionary<string, string>
-            {
-                {"User-Agent", userAgent}
-            };
-
-            var (loginRes, code) = await _restfulService.Post<ResultRes<string>>(ConfigConstant.Url + RouteConstant.Auth.Login, loginData, headers: loginHeaders);
+            var (loginRes, code) = await _restfulService.Post<ResultRes<string>>(ConfigConstant.Url + RouteConstant.Auth.Login, loginData);
 
             if (loginRes.IsSuccess == true)
             {

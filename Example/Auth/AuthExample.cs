@@ -15,5 +15,23 @@ namespace Example.Auth
                 ConnectionId = "abc"
             });
         }
+
+        public static async Task RegisterExample()
+        {
+            var a = await Mediator.Send<RegisterReq, string>(new RegisterReq()
+            {
+                Username = "toan3210",
+                Password = "toan123456",
+                ConfirmPassword = "toan123456"
+            });
+        }
+
+        public static async Task LogoutExample()
+        {
+            var a = await Mediator.Send<LogoutReq, string>(new LogoutReq()
+            {
+                SessionId = "hR32e_NZVR1FnMAloP8Io"
+            });
+        }
     }
 }
